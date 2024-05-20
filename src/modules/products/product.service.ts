@@ -38,6 +38,10 @@ const searchProductsDB = async (searchTerm: string) => {
     return products;
 };
 
+const deleteProductDB = async(_id: string) =>{
+    const result = await Product.deleteOne({_id})
+    return result
+}
 
 export const ProductService = {
     createProductDB,
@@ -45,4 +49,5 @@ export const ProductService = {
     getSingleProductDB,
     updateSingleProductDB,
     searchProductsDB,
+    deleteProductDB,
 }
