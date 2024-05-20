@@ -21,6 +21,24 @@ const updateSingleProductDB = async (_id: string, updateData: Partial<TProduct>)
     return result;
 };
 
+const searchProductsDB = async (searchTerm: string) => {
+    const searchRegex = new RegExp(searchTerm, 'i');
+    const products = await Product.aggregate([
+        {
+            $match: {
+                $or: [
+                    { name: searchRegex },
+                    { description: searchRegex },
+                    { category: searchRegex },
+                    { tags: { $in: [searchRegex] } }
+                ]
+            }
+        }
+    ]);
+    return products;
+};
+
+
 export const ProductService = {
     createProductDB,
     getAllProductsDB,
