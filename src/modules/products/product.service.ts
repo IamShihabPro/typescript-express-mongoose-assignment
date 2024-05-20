@@ -43,5 +43,6 @@ export const ProductService = {
     createProductDB,
     getAllProductsDB,
     getSingleProductDB,
-    updateSingleProductDB
+    updateSingleProductDB,
+    searchProductsDB,
 }

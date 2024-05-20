@@ -71,6 +71,25 @@ const updateSingleProduct = async (req: Request, res: Response) => {
     }
 };
 
+// search query
+const searchProducts = async (req: Request, res: Response) => {
+    try {
+        const searchTerm = req.query.searchTerm as string;
+        const products = await ProductService.searchProductsDB(searchTerm);
+        res.status(200).json({
+            success: true,
+            message: `Products matching search term '${searchTerm}' fetched successfully!`,
+            data: products,
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({
+            success: false,
+            message: "An error occurred while fetching products.",
+        });
+    }
+};
+
   
 
 export const productController = {
@@ -78,4 +97,5 @@ export const productController = {
     getAllProducts,
     getSingleProduct,
     updateSingleProduct,
+    searchProducts,
 }
