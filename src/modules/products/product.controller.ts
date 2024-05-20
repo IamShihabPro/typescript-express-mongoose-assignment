@@ -6,13 +6,24 @@ const createProduct = async(req: Request, res: Response) =>{
     try {
         const productData = req.body
         const result = await ProductService.createProductDB(productData)
+
+        if (!result) {
+            return res.status(404).json({
+                success: false,
+                message: "Product cannot created",
+            });
+        }
         res.status(200).json({
             "success": true,
             "message": "Product created successfully!",
             data: result
         })
     } catch (error) {
-        console.log(error)
+        console.error(error);
+        res.status(500).json({
+            success: false,
+            message: "An error occurred while create the product.",
+        });
     }
 }
 
@@ -20,13 +31,24 @@ const createProduct = async(req: Request, res: Response) =>{
 const getAllProducts = async (req: Request, res: Response) => {
     try {
       const result = await ProductService.getAllProductsDB()
+
+      if (!result) {
+        return res.status(404).json({
+            success: false,
+            message: "Products not found",
+        });
+    }
       res.status(200).json({
         success: true,
         message: 'Product are retrived successfully',
         data: result,
       })
     } catch (error) {
-      console.log(error)
+        console.error(error);
+        res.status(500).json({
+            success: false,
+            message: "An error occurred while retrived the product.",
+        });
     }
   }
 
@@ -35,13 +57,23 @@ const getSingleProduct = async (req: Request, res: Response) =>{
     try {
         const {productId} = req.params
         const result = await ProductService.getSingleProductDB(productId)
+        if (!result) {
+            return res.status(404).json({
+                success: false,
+                message: "Product not found",
+            });
+        }
         res.status(200).json({
             success: true,
             message: "Product are fetched successfully !",
             data: result,
           });
     } catch (error) {
-        console.log(error)
+        console.error(error);
+        res.status(500).json({
+            success: false,
+            message: "An error occurred while fetching the product.",
+        });
     }
 }
 
@@ -89,8 +121,6 @@ const searchProducts = async (req: Request, res: Response) => {
         });
     }
 };
-
-  
 
 export const productController = {
     createProduct,
