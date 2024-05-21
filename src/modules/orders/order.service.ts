@@ -11,8 +11,9 @@ const getAllOrdersDB = async () => {
     return result
 }
 
+
 const getOrdersByEmailDB = async (email: string) => {
-    const orders = await Order.find({ email })
+    const orders = await Order.find({ email: new RegExp(email, 'i') });
     return orders;
 };
 
