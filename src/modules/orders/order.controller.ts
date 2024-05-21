@@ -7,9 +7,8 @@ import { Product } from '../products/product.model';
 const createOrder = async (req: Request, res: Response) => {
     try {
         const orderData = req.body;
-        
         const zodParsedData = TOrderValidationSchema.parse(orderData);
-        
+
         const product = await Product.findById(zodParsedData.productId);
 
         if (!product) {
@@ -18,7 +17,25 @@ const createOrder = async (req: Request, res: Response) => {
                 message: "Product not found",
             });
         }
-        
+
+        if (product.inventory.quantity < zodParsedData.quantity) {
+            return res.status(400).json({
+                success: false,
+                message: "The product stock is not sufficient",
+            });
+        }
+
+        // Reduce quantity by the order quantity
+        product.inventory.quantity -= zodParsedData.quantity;
+
+        // If quantity becomes 0, set inStock to false
+        if (product.inventory.quantity === 0) {
+            product.inventory.inStock = false;
+        }
+
+        // Save the updated product
+        await product.save();
+
         const result = await OrderService.createOrderDB(zodParsedData);
 
         if (!result) {
@@ -27,7 +44,7 @@ const createOrder = async (req: Request, res: Response) => {
                 message: "Order cannot be created",
             });
         }
-        
+
         res.status(200).json({
             success: true,
             message: "Order created successfully!",
