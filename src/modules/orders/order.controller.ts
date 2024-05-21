@@ -21,7 +21,7 @@ const createOrder = async (req: Request, res: Response) => {
         if (product.inventory.quantity < zodParsedData.quantity) {
             return res.status(400).json({
                 success: false,
-                message: "The product stock is not sufficient",
+                message: "Insufficient quantity available in inventory",
             });
         }
 
