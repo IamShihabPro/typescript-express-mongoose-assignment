@@ -11,9 +11,18 @@ const getAllOrdersDB = async () => {
     return result
 }
 
+// const getOrdersByEmailDB = async (email: string) => {
+//     const result = await Order.find({email: email })
+//     return result;
+// };
 const getOrdersByEmailDB = async (email: string) => {
-    const result = await Order.find({email: email })
-    return result;
+    const searchRegex = new RegExp(email, 'i');
+    const order = await Order.aggregate([
+        {
+            $match: {email: searchRegex}
+        }
+    ]);
+    return order;
 };
 
 export const OrderService ={

@@ -1,33 +1,46 @@
 import express, { Request, Response } from 'express'
 import { OrderService } from './order.service'
 import TOrderValidationSchema from './order.zod.validation'
+import { Product } from '../products/product.model';
 
 // create order
-const createOrder = async(req: Request, res: Response) =>{
-   try {
-    const orderData = req.body
-    const zodParsedData = TOrderValidationSchema.parse(orderData)
-    const result = await OrderService.createOrderDB(zodParsedData)
+const createOrder = async (req: Request, res: Response) => {
+    try {
+        const orderData = req.body;
+        
+        const zodParsedData = TOrderValidationSchema.parse(orderData);
+        
+        const product = await Product.findById(zodParsedData.productId);
 
-    if (!result) {
-        return res.status(404).json({
-            success: false,
-            message: "Order cannot created",
+        if (!product) {
+            return res.status(404).json({
+                success: false,
+                message: "Product not found",
+            });
+        }
+        
+        const result = await OrderService.createOrderDB(zodParsedData);
+
+        if (!result) {
+            return res.status(404).json({
+                success: false,
+                message: "Order cannot be created",
+            });
+        }
+        
+        res.status(200).json({
+            success: true,
+            message: "Order created successfully!",
+            data: result,
         });
-    }
-    res.status(200).json({
-        "success": true,
-        "message": "Order created successfully!",
-        data: result
-    })
-   } catch (error) {
+    } catch (error) {
         console.error(error);
         res.status(500).json({
             success: false,
-            message: "An error occurred while create the order.",
+            message: "An error occurred while creating the order.",
         });
-   }
-}
+    }
+};
 
 // get all orders
 const getAllOrders = async (req: Request, res: Response) => {
