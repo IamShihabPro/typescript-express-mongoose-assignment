@@ -1,11 +1,13 @@
 import { Request, Response } from 'express'
 import { ProductService } from './product.service'
+import TProductValidationSchema from './product.zod.validation'
 
 // create product
 const createProduct = async(req: Request, res: Response) =>{
     try {
         const productData = req.body
-        const result = await ProductService.createProductDB(productData)
+        const zodParsedData = TProductValidationSchema.parse(productData)
+        const result = await ProductService.createProductDB(zodParsedData)
 
         if (!result) {
             return res.status(404).json({
