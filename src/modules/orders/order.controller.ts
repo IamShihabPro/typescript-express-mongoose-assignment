@@ -1,4 +1,4 @@
-import express, { Request, Response } from 'express'
+import { Request, Response } from 'express'
 import { OrderService } from './order.service'
 import TOrderValidationSchema from './order.zod.validation'
 import { Product } from '../products/product.model';

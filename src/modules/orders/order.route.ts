@@ -1,4 +1,4 @@
-import express, { Request, Response } from 'express'
+import express from 'express'
 import { orderController } from './order.controller';
 
 const router = express.Router()
