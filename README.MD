@@ -3,16 +3,18 @@ Hosted in vercel -> https://assignment-2-phi-ashy.vercel.app
 
 ## Steps to Run the Application Locally
 
-1. Clone the Repository
+## Clone the Repository
 First, clone your project repository from GitHub (or any other version control system) to your local machine.
 
- git clone repository-url
- cd project-directory
- npm install
+1. git clone repository-url
 
-2. Create a .env file in the root directory:
+2. cd project-directory
 
-PORT=5000
- DATABASE_URL=mongodb://localhost:27017/your_database_name
+3. npm install
 
-3. npm run start:dev 
+## Create a .env file in the root directory:
+
+1. PORT=5000
+2. DATABASE_URL=mongodb://localhost:27017/your_database_name
+
+## npm run start:dev 
