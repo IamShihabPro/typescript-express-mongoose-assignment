@@ -44,24 +44,33 @@ const createProduct = (req, res) => __awaiter(void 0, void 0, void 0, function* 
 // get all product
 const getAllProducts = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const result = yield product_service_1.ProductService.getAllProductsDB();
-        if (!result) {
-            return res.status(404).json({
-                success: false,
-                message: "Products not found",
+        const { searchTerm } = req.query;
+        const result = yield product_service_1.ProductService.getAllProductsDB(searchTerm);
+        if (searchTerm && result.length > 0) {
+            return res.status(200).json({
+                success: true,
+                message: `Products matching search term '${searchTerm}' fetched successfully!`,
+                data: result,
             });
         }
-        res.status(200).json({
+        else if (result.length > 0) {
+            return res.status(200).json({
+                success: true,
+                message: 'Products fetched successfully!',
+                data: result,
+            });
+        }
+        return res.status(200).json({
             success: true,
-            message: 'Product are retrived successfully',
+            message: 'Matching product not available!',
             data: result,
         });
     }
     catch (error) {
-        console.error(error);
-        res.status(500).json({
+        return res.status(500).json({
             success: false,
-            message: "An error occurred while retrived the product.",
+            message: 'Something went wrong',
+            error: error,
         });
     }
 });
@@ -116,25 +125,6 @@ const updateSingleProduct = (req, res) => __awaiter(void 0, void 0, void 0, func
         });
     }
 });
-// search query
-const searchProducts = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        const searchTerm = req.query.searchTerm;
-        const products = yield product_service_1.ProductService.searchProductsDB(searchTerm);
-        res.status(200).json({
-            success: true,
-            message: `Products matching search term '${searchTerm}' fetched successfully!`,
-            data: products,
-        });
-    }
-    catch (error) {
-        console.error(error);
-        res.status(500).json({
-            success: false,
-            message: "An error occurred while fetching products.",
-        });
-    }
-});
 // delete product
 const deleteProduct = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -165,6 +155,6 @@ exports.productController = {
     getAllProducts,
     getSingleProduct,
     updateSingleProduct,
-    searchProducts,
+    // searchProducts,
     deleteProduct,
 };

@@ -66,60 +66,38 @@ const createOrder = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
 // get all orders
 const getAllOrders = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const result = yield order_service_1.OrderService.getAllOrdersDB();
-        if (!result) {
-            return res.status(404).json({
-                success: false,
-                message: "Products not found",
-            });
-        }
-        res.status(200).json({
-            success: true,
-            message: 'Product are retrived successfully',
-            data: result,
-        });
-    }
-    catch (error) {
-        console.error(error);
-        res.status(500).json({
-            success: false,
-            message: "An error occurred while retrived the product.",
-        });
-    }
-});
-// Get orders by email
-const getOrdersByEmail = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        const email = req.query.email;
-        if (!email) {
-            return res.status(400).json({
-                success: false,
-                message: "Email parameter is missing in the request.",
-            });
-        }
-        const result = yield order_service_1.OrderService.getOrdersByEmailDB(email);
+        const { email } = req.query;
+        const result = yield order_service_1.OrderService.getAllOrdersDB(email);
         if (!result || result.length === 0) {
             return res.status(404).json({
                 success: false,
-                message: `No orders found for email ${email}.`,
+                message: 'Order not found',
             });
         }
-        res.status(200).json({
-            success: true,
-            message: "Orders fetched successfully for email!",
-            data: result,
-        });
+        if (email) {
+            return res.status(200).json({
+                success: true,
+                message: 'Orders fetched successfully for user email!',
+                data: result,
+            });
+        }
+        else {
+            return res.status(200).json({
+                success: true,
+                message: 'Orders fetched successfully!',
+                data: result,
+            });
+        }
     }
     catch (error) {
-        console.error(error);
-        res.status(500).json({
+        return res.status(500).json({
             success: false,
-            message: "An error occurred while retrieving the orders.",
+            message: 'Order not found',
+            error: error
         });
     }
 });
 exports.orderController = {
     createOrder,
     getAllOrders,
-    getOrdersByEmail
 };

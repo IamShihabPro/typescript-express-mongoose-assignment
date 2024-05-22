@@ -15,16 +15,25 @@ const createOrderDB = (order) => __awaiter(void 0, void 0, void 0, function* () 
     const result = yield order_model_1.Order.create(order);
     return result;
 });
-const getAllOrdersDB = () => __awaiter(void 0, void 0, void 0, function* () {
-    const result = yield order_model_1.Order.find();
-    return result;
-});
-const getOrdersByEmailDB = (email) => __awaiter(void 0, void 0, void 0, function* () {
-    const orders = yield order_model_1.Order.find({ email: new RegExp(email, 'i') });
-    return orders;
+const getAllOrdersDB = (email) => __awaiter(void 0, void 0, void 0, function* () {
+    if (email) {
+        const result = yield order_model_1.Order.aggregate([
+            {
+                $match: { email: email },
+            },
+            {
+                $project: {
+                    __v: 0,
+                },
+            },
+        ]);
+        return result;
+    }
+    else {
+        return yield order_model_1.Order.find();
+    }
 });
 exports.OrderService = {
     createOrderDB,
     getAllOrdersDB,
-    getOrdersByEmailDB,
 };
