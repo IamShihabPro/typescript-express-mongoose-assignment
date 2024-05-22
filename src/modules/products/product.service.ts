@@ -6,10 +6,19 @@ const createProductDB = async (product: TProduct) =>{
     return result
 }
 
-const getAllProductsDB = async () => {
-    const result = await Product.find()
-    return result
+
+const getAllProductsDB = async (searchTerm: string) => {
+    if (searchTerm) {
+      const regex = new RegExp(searchTerm as string, 'i')
+      const result = await Product.find({
+        $or: [{ name: regex }, { description: regex }, { category: regex }],
+      })
+      console.log(result)
+      return result
+    }
+    return await Product.find()
   }
+  
 
 const getSingleProductDB = async (_id: string) => {
     const result = await Product.findOne({ _id })
@@ -19,23 +28,6 @@ const getSingleProductDB = async (_id: string) => {
 const updateSingleProductDB = async (_id: string, updateData: Partial<TProduct>) => {
     const result = await Product.findByIdAndUpdate(_id, updateData, { new: true });
     return result;
-};
-
-const searchProductsDB = async (searchTerm: string) => {
-    const searchRegex = new RegExp(searchTerm, 'i');
-    const products = await Product.aggregate([
-        {
-            $match: {
-                $or: [
-                    { name: searchRegex },
-                    { description: searchRegex },
-                    { category: searchRegex },
-                    { tags: { $in: [searchRegex] } }
-                ]
-            }
-        }
-    ]);
-    return products;
 };
 
 const deleteProductDB = async(_id: string) =>{
@@ -48,6 +40,5 @@ export const ProductService = {
     getAllProductsDB,
     getSingleProductDB,
     updateSingleProductDB,
-    searchProductsDB,
     deleteProductDB,
 }

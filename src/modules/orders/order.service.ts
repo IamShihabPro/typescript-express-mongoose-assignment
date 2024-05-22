@@ -6,19 +6,26 @@ const createOrderDB = async (order: TOrder) =>{
     return result
 }
 
-const getAllOrdersDB = async () => {
-    const result = await Order.find()
-    return result
-}
 
-
-const getOrdersByEmailDB = async (email: string) => {
-    const orders = await Order.find({ email: new RegExp(email, 'i') });
-    return orders;
-};
+const getAllOrdersDB = async (email: string) => {
+    if (email) {
+      const result = await Order.aggregate([
+        {
+          $match: { email: email },
+        },
+        {
+          $project: {
+            __v: 0,
+          },
+        },
+      ])
+      return result
+    } else {
+      return await Order.find()
+    }
+  }
 
 export const OrderService ={
     createOrderDB,
     getAllOrdersDB,
-    getOrdersByEmailDB,
 }

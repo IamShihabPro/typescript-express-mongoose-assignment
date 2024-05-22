@@ -32,26 +32,33 @@ const createProduct = async(req: Request, res: Response) =>{
 // get all product
 const getAllProducts = async (req: Request, res: Response) => {
     try {
-      const result = await ProductService.getAllProductsDB()
-
-      if (!result) {
-        return res.status(404).json({
-            success: false,
-            message: "Products not found",
-        });
-    }
-      res.status(200).json({
-        success: true,
-        message: 'Product are retrived successfully',
-        data: result,
-      })
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({
-            success: false,
-            message: "An error occurred while retrived the product.",
-        });
-    }
+        const { searchTerm } = req.query
+        const result = await ProductService.getAllProductsDB(searchTerm as string)
+        if (searchTerm && result.length > 0) {
+          return res.status(200).json({
+            success: true,
+            message: `Products matching search term '${searchTerm}' fetched successfully!`,
+            data: result,
+          })
+        } else if (result.length > 0) {
+          return res.status(200).json({
+            success: true,
+            message: 'Products fetched successfully!',
+            data: result,
+          })
+        }
+        return res.status(200).json({
+          success: true,
+          message: 'Matching product not available!',
+          data: result,
+        })
+      } catch (error) {
+        return res.status(500).json({
+          success: false,
+          message: 'Something went wrong',
+          error: error,
+        })
+      }
   }
 
 //   get single product
@@ -105,25 +112,6 @@ const updateSingleProduct = async (req: Request, res: Response) => {
     }
 };
 
-// search query
-const searchProducts = async (req: Request, res: Response) => {
-    try {
-        const searchTerm = req.query.searchTerm as string;
-        const products = await ProductService.searchProductsDB(searchTerm);
-        res.status(200).json({
-            success: true,
-            message: `Products matching search term '${searchTerm}' fetched successfully!`,
-            data: products,
-        });
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({
-            success: false,
-            message: "An error occurred while fetching products.",
-        });
-    }
-};
-
 // delete product
 const deleteProduct = async (req: Request, res: Response) => {
     try {
@@ -154,6 +142,6 @@ export const productController = {
     getAllProducts,
     getSingleProduct,
     updateSingleProduct,
-    searchProducts,
+    // searchProducts,
     deleteProduct,
 }
